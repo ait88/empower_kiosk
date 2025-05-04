@@ -7,6 +7,20 @@ echo "---------------------------------------------"
 echo "Empower Kiosk Update - Ver: $VERSION"
 echo "---------------------------------------------"
 
+# ---- Ensure .bash_profile is up-to-date ----
+BASH_PROFILE_LOCAL="/home/kiosk/.bash_profile"
+BASH_PROFILE_REPO="https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/bash_profile"
+
+curl -fsSL "$BASH_PROFILE_REPO" -o /tmp/bash_profile.new
+
+if ! cmp -s "$BASH_PROFILE_LOCAL" /tmp/bash_profile.new; then
+    cp /tmp/bash_profile.new "$BASH_PROFILE_LOCAL"
+    chown kiosk:kiosk "$BASH_PROFILE_LOCAL"
+    echo "✅ Updated .bash_profile from repo"
+else
+    echo "✅ .bash_profile already up-to-date"
+fi
+
 # ---- Config File ----
 CONFIG_FILE="/home/kiosk/.kiosk-config"
 AUTOSTART_FILE="/home/kiosk/.config/openbox/autostart"
