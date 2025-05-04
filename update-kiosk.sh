@@ -1,27 +1,58 @@
 #!/bin/bash
 set -e
 
-REPO_URL="https://git.aitdev.au/pm/empower_kiosk/raw/branch/main"
-SCRIPT_NAME="update-kiosk.sh"
+# ---- Script Version ----
+VERSION="0.01-$(date +%Y%m%d)"
+echo "---------------------------------------------"
+echo "Empower Kiosk Update - Ver: $VERSION"
+echo "---------------------------------------------"
 
-echo "🔄 Checking for updates..."
+# ---- Config File ----
+CONFIG_FILE="/home/kiosk/.kiosk-config"
+AUTOSTART_FILE="/home/kiosk/.config/openbox/autostart"
 
-# Pull latest autostart config (example)
-curl -fsSL "$REPO_URL/autostart" -o "$HOME/.config/openbox/autostart.new" || {
-    echo "⚠️ Failed to fetch update. Keeping current config."
-    exit 1
-}
-
-# Replace if different
-if ! cmp -s "$HOME/.config/openbox/autostart" "$HOME/.config/openbox/autostart.new"; then
-    mv "$HOME/.config/openbox/autostart.new" "$HOME/.config/openbox/autostart"
-    chmod +x "$HOME/.config/openbox/autostart"
-    echo "✅ Updated autostart configuration."
+# ---- Load Config ----
+if [ -f "$CONFIG_FILE" ]; then
+    source "$CONFIG_FILE"
 else
-    rm "$HOME/.config/openbox/autostart.new"
-    echo "✅ No changes detected."
+    echo "⚠️  Config file not found: $CONFIG_FILE"
+    exit 1
 fi
 
-# Optional: pull other scripts/configs
+echo "🖥️  Hostname     : $hostname"
+echo "🌐 Portal URL    : $portal_url"
+echo "🔒 Empower User  : $username"
+echo
 
-echo "🟢 Kiosk update check complete."
+# ---- Update Chromium Autostart ----
+UPDATED_AUTOSTART=$(cat <<EOF
+# Prevent screen blanking
+xset s off
+xset -dpms
+xset s noblank
+
+# Launch Chromium in kiosk mode
+chromium-browser --kiosk --no-first-run --disable-translate --noerrdialogs --disable-infobars "$portal_url"
+EOF
+)
+
+# ---- Check + Update Autostart ----
+if [ -f "$AUTOSTART_FILE" ]; then
+    CURRENT=$(cat "$AUTOSTART_FILE")
+    if [ "$CURRENT" != "$UPDATED_AUTOSTART" ]; then
+        echo "$UPDATED_AUTOSTART" > "$AUTOSTART_FILE"
+        chown kiosk:kiosk "$AUTOSTART_FILE"
+        echo "✅ Updated autostart to match portal URL"
+    else
+        echo "✅ Autostart already up-to-date"
+    fi
+else
+    echo "$UPDATED_AUTOSTART" > "$AUTOSTART_FILE"
+    chown kiosk:kiosk "$AUTOSTART_FILE"
+    echo "✅ Created missing autostart file"
+fi
+
+# ---- Future Add-ons: Apply themes, push updates, reboot if needed ----
+
+echo "🟢 Kiosk update complete."
+exit 0
