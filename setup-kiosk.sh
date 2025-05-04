@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# ---- Script Version - Manually Updated ----
+VERSION="0.01-$(date +%Y%m%d)"
+
 # ---- Default Values ----
 KIOSK_USER="kiosk"
 DEFAULT_HOSTNAME="empower_00"
@@ -19,7 +22,7 @@ EMPOWER_PASS=$DEFAULT_PASSWORD
 while true; do
     clear
     echo "------------------------------------------"
-    echo "Empower Kiosk Setup - Ver: 0.01"
+    echo "Empower Kiosk Setup - Ver: $VERSION"
     echo "------------------------------------------"
     echo
     echo "Please review the following configuration options."
