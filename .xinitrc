@@ -1,15 +1,12 @@
-# ---- Kiosk .bash_profile ----
+#!/bin/bash
 
-# Log update script run
+# Run update before launching Openbox
 echo "🛠️  Running kiosk update script..." | tee -a /home/kiosk/kiosk-update.log
-
-# Download + run update script
 curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh" -o /tmp/update-kiosk.sh
 chmod +x /tmp/update-kiosk.sh
 /tmp/update-kiosk.sh | tee -a /home/kiosk/kiosk-update.log
 
-# Wait briefly so user can see results
-sleep 2
+sleep 2  # Give user a moment to see log output
 
-# Start X if not already running
-[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx
+# Start Openbox session
+exec openbox-session
