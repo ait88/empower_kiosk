@@ -1,5 +1,3 @@
----
-
 ```markdown
 # Empower Kiosk
 
@@ -60,5 +58,3 @@ rm setup-kiosk.sh
 - Minimal attack surface
 - Runs on older or low-spec hardware
 ```
-
----
