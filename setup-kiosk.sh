@@ -2,7 +2,7 @@
 set -e
 
 # ---- Script Version - Manually Updated ----
-VERSION="0.01-$(date +%Y%m%d)"
+VERSION="1.00"
 
 # ---- Default Values ----
 KIOSK_USER="kiosk"
