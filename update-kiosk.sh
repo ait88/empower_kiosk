@@ -7,19 +7,19 @@ echo "---------------------------------------------"
 echo "Empower Kiosk Update - Ver: $VERSION"
 echo "---------------------------------------------"
 
-# ---- Ensure .xinitrc is up-to-date ----
-XINITRC_LOCAL="/home/kiosk/.xinitrc"
-XINITRC_REPO="https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/xinitrc"
+# ---- Ensure .xprofile is up-to-date ----
+XPROFILE_LOCAL="/home/kiosk/.xprofile"
+XPROFILE_REPO="https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/xprofile"
 
-curl -fsSL "$XINITRC_REPO" -o /tmp/xinitrc.new
+curl -fsSL "$XPROFILE_REPO" -o /tmp/xprofile.new
 
-if ! cmp -s "$XINITRC_LOCAL" /tmp/xinitrc.new; then
-    cp /tmp/xinitrc.new "$XINITRC_LOCAL"
-    chown kiosk:kiosk "$XINITRC_LOCAL"
-    chmod +x "$XINITRC_LOCAL"
-    echo "✅ Updated .xinitrc from repo"
+if ! cmp -s "$XPROFILE_LOCAL" /tmp/xprofile.new; then
+    cp /tmp/xprofile.new "$XPROFILE_LOCAL"
+    chown kiosk:kiosk "$XPROFILE_LOCAL"
+    chmod +x "$XPROFILE_LOCAL"
+    echo "✅ Updated .xprofile from repo"
 else
-    echo "✅ .xinitrc already up-to-date"
+    echo "✅ .xprofile already up-to-date"
 fi
 
 
