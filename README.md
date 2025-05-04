@@ -1,18 +1,21 @@
+---
+
+```markdown
 # Empower Kiosk
 
-A lightweight, script-based Linux kiosk setup for accessing a job management portal (Empower Factory). Designed to replace insecure legacy PCs with a minimal Ubuntu-based kiosk environment.
+A lightweight, script-driven Linux kiosk for accessing the Empower Factory job management portal. Designed to replace insecure legacy Windows PCs with a minimal, managed Ubuntu-based environment.
 
 ---
 
-##  Requirements
+## ✅ Requirements
 
-- Ubuntu 22.04 LTS (Server or Minimal Install)
-- Network access (to download packages and update script)
-- Basic hardware (dual-core CPU, 4GB+ RAM, 10GB+ disk recommended)
+- Ubuntu **22.04 LTS** (minimal or server install recommended)
+- Basic hardware (e.g., dual-core CPU, 4GB+ RAM, 10GB+ disk)
+- Internet access (for setup and auto-updates)
 
 ---
 
-##  Installation
+## 🚀 Installation
 
 Run the following commands on a fresh Ubuntu 22.04 system:
 
@@ -22,8 +25,40 @@ chmod +x setup-kiosk.sh
 sudo ./setup-kiosk.sh
 ```
 
-## Optional Cleanup
+This will:
+- Install a minimal graphical environment with Chromium in kiosk mode
+- Configure auto-login to a locked-down kiosk user
+- Prompt for site and login details
+- Schedule automatic updates at each boot
+
+---
+
+## 🔁 Automatic Updates
+
+Each time the kiosk boots:
+- The latest update script is pulled from this repo
+- Config files (e.g. `autostart`, `.xprofile`) are patched as needed
+- The kiosk environment is re-applied in an idempotent way
+
+Logs are written to:  
+`/home/kiosk/kiosk-update.log`
+
+---
+
+## 🧹 Optional Cleanup
 
 ```bash
 rm setup-kiosk.sh
 ```
+
+---
+
+## 💡 Project Goals
+
+- Fully self-updating
+- Git-managed, replicable configuration
+- Minimal attack surface
+- Runs on older or low-spec hardware
+```
+
+---
