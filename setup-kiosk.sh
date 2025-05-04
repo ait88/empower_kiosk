@@ -101,8 +101,8 @@ user-session=openbox
 EOF
 
 # ---- Openbox Autostart ----
-sudo -u $KIOSK_USER mkdir -p /home/$KIOSK_USER/.config/openbox
-sudo -u $KIOSK_USER tee /home/$KIOSK_USER/.config/openbox/autostart >/dev/null <<EOF
+mkdir -p /home/$KIOSK_USER/.config/openbox
+tee /home/$KIOSK_USER/.config/openbox/autostart >/dev/null <<EOF
 # Prevent screen blanking
 xset s off
 xset -dpms
@@ -113,11 +113,11 @@ chromium-browser --kiosk --no-first-run --disable-translate --noerrdialogs --dis
 EOF
 
 # ---- .xinitrc and .bash_profile ----
-sudo -u $KIOSK_USER tee /home/$KIOSK_USER/.xinitrc >/dev/null <<EOF
+tee /home/$KIOSK_USER/.xinitrc >/dev/null <<EOF
 exec openbox-session
 EOF
 
-sudo -u $KIOSK_USER tee -a /home/$KIOSK_USER/.bash_profile >/dev/null <<EOF
+tee -a /home/$KIOSK_USER/.bash_profile >/dev/null <<EOF
 # Start X session automatically
 [[ -z \$DISPLAY && \$XDG_VTNR -eq 1 ]] && startx
 
