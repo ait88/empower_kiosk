@@ -19,7 +19,7 @@ else
     exit 1
 fi
 
-echo "🖥️  Hostname     : $hostname"
+echo "🖥️ Hostname      : $hostname"
 echo "🌐 Portal URL    : $portal_url"
 echo "🔒 Empower User  : $username"
 echo
