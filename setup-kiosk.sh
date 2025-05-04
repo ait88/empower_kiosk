@@ -125,8 +125,8 @@ sudo -u $KIOSK_USER tee -a /home/$KIOSK_USER/.bash_profile >/dev/null <<EOF
 curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh" | bash || echo "⚠️ Kiosk update check failed."
 EOF
 
-# ---- Permissions ----
-chown -R $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER
-
 echo -e "\n✅ Kiosk environment installed with your custom settings."
 echo "🔁 Reboot now to test automatic login, kiosk mode, and update check."
+
+# ---- Final Ownership Fix (ensure everything is clean) ----
+chown -R $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER
