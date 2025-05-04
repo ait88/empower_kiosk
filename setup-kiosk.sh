@@ -6,7 +6,7 @@ KIOSK_USER="kiosk"
 UPDATE_SCRIPT_URL="https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh"
 
 # ---- Prompt for Portal URL ----
-read -rp "Enter the job management portal URL (e.g. https://empower.example.com): " PORTAL_URL
+read -rp "Enter the job management portal URL (e.g. https://factory.empowersoftware.co.nz/): " PORTAL_URL
 
 # ---- Pre-accept Microsoft Fonts EULA ----
 echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | sudo debconf-set-selections
