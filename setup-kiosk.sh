@@ -19,7 +19,7 @@ EMPOWER_PASS=$DEFAULT_PASSWORD
 while true; do
     clear
     echo "------------------------------------------"
-    echo "Empower Kiosk Setup - Interactive Config"
+    echo "Empower Kiosk Setup - Ver: 0.01"
     echo "------------------------------------------"
     echo
     echo "Please review the following configuration options."
