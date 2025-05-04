@@ -1,4 +1,3 @@
-```markdown
 # Empower Kiosk
 
 A lightweight, script-driven Linux kiosk for accessing the Empower Factory job management portal. Designed to replace insecure legacy Windows PCs with a minimal, managed Ubuntu-based environment.
@@ -57,4 +56,3 @@ rm setup-kiosk.sh
 - Git-managed, replicable configuration
 - Minimal attack surface
 - Runs on older or low-spec hardware
-```
