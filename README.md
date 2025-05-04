@@ -17,4 +17,7 @@ A lightweight, script-based Linux kiosk setup for accessing a job management por
 Run the following command on a fresh Ubuntu 22.04 system:
 
 ```bash
-curl -sSL https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/setup-kiosk.sh | sudo bash
+curl -O https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/setup-kiosk.sh
+chmod +x setup-kiosk.sh
+sudo ./setup-kiosk.sh
+
