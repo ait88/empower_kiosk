@@ -7,19 +7,21 @@ echo "---------------------------------------------"
 echo "Empower Kiosk Update - Ver: $VERSION"
 echo "---------------------------------------------"
 
-# ---- Ensure .bash_profile is up-to-date ----
-BASH_PROFILE_LOCAL="/home/kiosk/.bash_profile"
-BASH_PROFILE_REPO="https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/bash_profile"
+# ---- Ensure .xinitrc is up-to-date ----
+XINITRC_LOCAL="/home/kiosk/.xinitrc"
+XINITRC_REPO="https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/xinitrc"
 
-curl -fsSL "$BASH_PROFILE_REPO" -o /tmp/bash_profile.new
+curl -fsSL "$XINITRC_REPO" -o /tmp/xinitrc.new
 
-if ! cmp -s "$BASH_PROFILE_LOCAL" /tmp/bash_profile.new; then
-    cp /tmp/bash_profile.new "$BASH_PROFILE_LOCAL"
-    chown kiosk:kiosk "$BASH_PROFILE_LOCAL"
-    echo "✅ Updated .bash_profile from repo"
+if ! cmp -s "$XINITRC_LOCAL" /tmp/xinitrc.new; then
+    cp /tmp/xinitrc.new "$XINITRC_LOCAL"
+    chown kiosk:kiosk "$XINITRC_LOCAL"
+    chmod +x "$XINITRC_LOCAL"
+    echo "✅ Updated .xinitrc from repo"
 else
-    echo "✅ .bash_profile already up-to-date"
+    echo "✅ .xinitrc already up-to-date"
 fi
+
 
 # ---- Config File ----
 CONFIG_FILE="/home/kiosk/.kiosk-config"
