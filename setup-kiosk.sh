@@ -3,6 +3,7 @@ set -e
 
 # ---- Configurable ----
 KIOSK_USER="kiosk"
+UPDATE_SCRIPT_URL="https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh"
 
 # ---- Prompt for Portal URL ----
 read -rp "Enter the job management portal URL (e.g. https://factory.empowersoftware.co.nz/): " PORTAL_URL
@@ -27,7 +28,7 @@ autologin-user-timeout=0
 user-session=openbox
 EOF
 
-# ---- Kiosk Startup (Openbox Autostart) ----
+# ---- Openbox Autostart ----
 sudo -u $KIOSK_USER mkdir -p /home/$KIOSK_USER/.config/openbox
 sudo -u $KIOSK_USER tee /home/$KIOSK_USER/.config/openbox/autostart >/dev/null <<EOF
 # Prevent screen blanking
@@ -39,17 +40,21 @@ xset s noblank
 chromium-browser --kiosk --no-first-run --disable-translate --noerrdialogs --disable-infobars "$PORTAL_URL"
 EOF
 
-# ---- .xinitrc and .bash_profile to launch X at login ----
+# ---- .xinitrc and .bash_profile ----
 sudo -u $KIOSK_USER tee /home/$KIOSK_USER/.xinitrc >/dev/null <<EOF
 exec openbox-session
 EOF
 
 sudo -u $KIOSK_USER tee -a /home/$KIOSK_USER/.bash_profile >/dev/null <<EOF
+# Start X session automatically
 [[ -z \$DISPLAY && \$XDG_VTNR -eq 1 ]] && startx
+
+# Pull updates from repo
+curl -fsSL "$UPDATE_SCRIPT_URL" | bash || echo "⚠️ Kiosk update check failed."
 EOF
 
 # ---- Final Permissions ----
 chown -R $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER
 
 echo -e "\n✅ Kiosk environment installed."
-echo "🔁 Reboot now to test automatic login and kiosk mode."
+echo "🔁 Reboot now to test automatic login, kiosk mode, and update check."
