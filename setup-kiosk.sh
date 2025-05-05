@@ -2,7 +2,7 @@
 set -e
 
 # ---- Script Version - Manually Updated ----
-VERSION="1.02"
+VERSION="1.00"
 
 # ---- Default Values ----
 KIOSK_USER="kiosk"
@@ -100,9 +100,10 @@ systemctl mask \
   plymouth-start.service \
   plymouth-quit.service \
   plymouth-quit-wait.service \
-  getty@tty1.service
+  getty@tty1.service || true
 
-# ---- Update GRUB Kernel Params ----
+# ---- Remove splash and quiet from GRUB and set clean params ----
+sed -i 's/\<splash\>//g; s/\<quiet\>//g' /etc/default/grub
 sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash /' /etc/default/grub
 update-grub
 
@@ -143,10 +144,6 @@ sleep 2
 sudo -u $KIOSK_USER startx
 EOF
 chmod +x /home/$KIOSK_USER/kiosk-startup.sh
-
-# ---- Download ASCII Logo ----
-curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/logo.txt" -o /home/$KIOSK_USER/logo.txt
-chown $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER/logo.txt
 
 # ---- Systemd Splash Service ----
 tee /etc/systemd/system/kiosk-splash.service >/dev/null <<EOF
