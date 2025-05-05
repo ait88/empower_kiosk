@@ -128,22 +128,28 @@ EOF
 tee /home/$KIOSK_USER/kiosk-startup.sh >/dev/null <<EOF
 #!/bin/bash
 clear
-
-# Splash Banner from logo file
-cat /home/$KIOSK_USER/logo.txt
-
-echo " Checking for updates..."
+cat /home/kiosk/logo.txt
+echo -e "\n🔍 Checking for updates..."
 sleep 1
 
-# Optionally run update script here
+# Uncomment below when ready
 # curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh" | bash
 
-echo " System ready. Launching kiosk..."
-sleep 2
+echo "✅ System ready. Launching kiosk..."
+sleep 3
 
-sudo -u $KIOSK_USER startx
+sudo chown kiosk:tty /dev/tty1 2>/dev/null || true
+sleep 1
+startx
 EOF
+
+# ---- Update Permissions ----
+usermod -aG tty kiosk
 chmod +x /home/$KIOSK_USER/kiosk-startup.sh
+sudo chown -R kiosk:kiosk /home/kiosk
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl restart kiosk-splash.service
 
 # ---- Download ASCII Logo ----
 curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/logo.txt" -o /home/$KIOSK_USER/logo.txt
