@@ -157,8 +157,9 @@ After=local-fs.target
 Before=getty@tty1.service
 
 [Service]
+User=kiosk
 Type=oneshot
-ExecStart=/home/$KIOSK_USER/kiosk-startup.sh
+ExecStart=/home/kiosk/kiosk-startup.sh
 StandardOutput=tty
 StandardError=tty
 TTYPath=/dev/tty1
