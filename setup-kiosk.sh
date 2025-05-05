@@ -37,7 +37,7 @@ while true; do
     echo "5. Empower Password      : $DEFAULT_PASSWORD"
     echo "6. Git Branch            : $KIOSK_BRANCH"
     echo
-    read -rp "Select option [1-5] to edit, or ENTER to continue: " CHOICE
+    read -rp "Select option [1-6] to edit, or ENTER to continue: " CHOICE
 
     case "$CHOICE" in
         1)
