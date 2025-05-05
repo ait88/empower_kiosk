@@ -2,7 +2,7 @@
 set -e
 
 # ---- Script Version ----
-VERSION="0.02-$(date +%Y%m%d)"
+VERSION="0.04-$(date +%Y%m%d)"
 echo "---------------------------------------------"
 echo "Empower Kiosk Update - Ver: $VERSION"
 echo "---------------------------------------------"
@@ -10,6 +10,8 @@ echo "---------------------------------------------"
 # ---- Config File ----
 CONFIG_FILE="/home/kiosk/.kiosk-config"
 AUTOSTART_FILE="/home/kiosk/.config/openbox/autostart"
+LOGO_FILE="/home/kiosk/logo.txt"
+LOGO_URL="https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/logo.txt"
 
 # ---- Load Config ----
 if [ -f "$CONFIG_FILE" ]; then
@@ -52,7 +54,15 @@ else
     echo "[✓] Created missing autostart file"
 fi
 
-# ---- Future Add-ons: Apply themes, push updates, reboot if needed ----
+# ---- Refresh Splash Logo ----
+echo -n "[~] Downloading splash logo... "
+if curl -fsSL "$LOGO_URL" -o "$LOGO_FILE"; then
+    chown kiosk:kiosk "$LOGO_FILE"
+    echo "Done."
+else
+    echo "Failed to download. Keeping existing logo."
+fi
 
+# ---- Future Add-ons: Apply themes, push updates, reboot if needed ----
 echo "[OK] Kiosk update complete."
 exit 0
