@@ -123,9 +123,15 @@ xset s off
 xset -dpms
 xset s noblank
 
-# Launch Chromium in kiosk mode
-chromium-browser --kiosk --no-first-run --disable-translate --noerrdialogs --disable-infobars "$PORTAL_URL"
+# Launch Chromium via external script
+/home/$KIOSK_USER/chromium.sh
 EOF
+
+# ---- Download Chromium Launcher ----
+curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/chromium.sh" -o /home/$KIOSK_USER/chromium.sh
+chmod +x /home/$KIOSK_USER/chromium.sh
+chown $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER/chromium.sh
+
 
 # ---- .xinitrc ----
 tee /home/$KIOSK_USER/.xinitrc >/dev/null <<EOF
