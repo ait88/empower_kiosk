@@ -104,7 +104,7 @@ systemctl mask \
 
 # ---- Remove splash and quiet from GRUB and set clean params ----
 sed -i 's/\<splash\>//g; s/\<quiet\>//g' /etc/default/grub
-sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash /' /etc/default/grub
+sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/&quiet splash console=tty1 /' /etc/default/grub
 update-grub
 
 # ---- Openbox Autostart ----
