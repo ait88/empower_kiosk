@@ -1,5 +1,6 @@
 #!/bin/bash
-source /home/kiosk/.kiosk-config        
+source /home/kiosk/.kiosk-config    
+BRANCH="${branch:-main}"    
 LOG_FILE="/tmp/chromium.log"
 
 export DISPLAY=:0                       
