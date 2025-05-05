@@ -10,7 +10,8 @@ DEFAULT_HOSTNAME="empower_00"
 DEFAULT_PORTAL_URL="https://factory.empowersoftware.co.nz/"
 DEFAULT_WHITELIST="*.empowersoftware.co.nz"
 DEFAULT_USERNAME="empower02"
-DEFAULT_PASSWORD=""
+DEFAULT_PASSWORD="xxxxxxxxx"
+DEFAULT_BRANCH="main"
 
 # ---- Prompt Loop ----
 KIOSK_HOSTNAME=$DEFAULT_HOSTNAME
@@ -18,6 +19,7 @@ PORTAL_URL=$DEFAULT_PORTAL_URL
 WHITELIST=$DEFAULT_WHITELIST
 EMPOWER_USER=$DEFAULT_USERNAME
 EMPOWER_PASS=$DEFAULT_PASSWORD
+KIOSK_BRANCH=$DEFAULT_BRANCH
 
 while true; do
     clear
@@ -32,7 +34,8 @@ while true; do
     echo "2. Portal Home Page      : $PORTAL_URL"
     echo "3. Whitelist URLs        : $WHITELIST"
     echo "4. Empower Username      : $EMPOWER_USER"
-    echo "5. Empower Password      : [hidden]"
+    echo "5. Empower Password      : $DEFAULT_PASSWORD"
+    echo "6. Git Branch            : $KIOSK_BRANCH"
     echo
     read -rp "Select option [1-5] to edit, or ENTER to continue: " CHOICE
 
@@ -52,6 +55,9 @@ while true; do
         5)
             read -rsp "Enter Empower password: " EMPOWER_PASS
             echo
+            ;;
+        6)
+            read -rp "Enter git branch to use [main/dev]: " KIOSK_BRANCH
             ;;
         "")
             break
@@ -75,6 +81,7 @@ portal_url=$PORTAL_URL
 whitelist=$WHITELIST
 username=$EMPOWER_USER
 password=$EMPOWER_PASS
+branch=$KIOSK_BRANCH
 EOF
 
 # ---- Pre-accept Microsoft Fonts EULA ----
@@ -132,7 +139,8 @@ chown $KIOSK_USER:$KIOSK_USER "$AUTOSTART_FILE"
 chmod +x "$AUTOSTART_FILE"
 
 # ---- Download Chromium Launcher ----
-curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/chromium.sh" -o /home/$KIOSK_USER/chromium.sh
+BRANCH="${branch:-main}"
+curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/$BRANCH/main/chromium.sh" -o /home/$KIOSK_USER/chromium.sh
 chmod +x /home/$KIOSK_USER/chromium.sh
 chown $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER/chromium.sh
 
@@ -151,7 +159,8 @@ echo -e " Checking for updates..."
 sleep 3
 
 # ---- Update Script URL ----
-curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh" | bash
+BRANCH="${branch:-main}"
+curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/$BRANCH/update-kiosk.sh" | bash
 
 echo " [✓] System ready. Launching kiosk..."
 sleep 5
@@ -159,7 +168,8 @@ startx
 EOF
 
 # ---- Download ASCII Logo ----
-curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/logo.txt" -o /home/$KIOSK_USER/logo.txt
+BRANCH="${branch:-main}"
+curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/$BRANCH/main/logo.txt" -o /home/$KIOSK_USER/logo.txt
 
 # ---- Permissions ----
 usermod -aG tty $KIOSK_USER
