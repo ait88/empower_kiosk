@@ -100,9 +100,10 @@ systemctl mask \
   plymouth-start.service \
   plymouth-quit.service \
   plymouth-quit-wait.service \
-  getty@tty1.service
+    getty@tty1.service || true
 
-# ---- Update GRUB Kernel Params ----
+# ---- Remove splash and quiet from GRUB and set clean params ----
+sed -i 's/\<splash\>//g; s/\<quiet\>//g' /etc/default/grub
 sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash /' /etc/default/grub
 update-grub
 
