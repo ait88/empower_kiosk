@@ -57,27 +57,6 @@ else
     echo "[✓] Created missing autostart file"
 fi
 
-# ---- Check + Update Autostart ----
-if [ -f "$AUTOSTART_FILE" ]; then
-    CURRENT=$(cat "$AUTOSTART_FILE")
-    if [ "$CURRENT" != "$UPDATED_AUTOSTART" ]; then
-        echo ""    
-        echo "$UPDATED_AUTOSTART" > "$AUTOSTART_FILE"
-        chown kiosk:kiosk "$AUTOSTART_FILE"
-        echo ""
-        echo "[✓] Updated autostart to match portal URL"
-    else
-        echo ""
-        echo "[✓] Autostart already up-to-date"
-    fi
-else
-    echo ""
-    echo "$UPDATED_AUTOSTART" > "$AUTOSTART_FILE"
-    chown kiosk:kiosk "$AUTOSTART_FILE"
-    echo ""
-    echo "[✓] Created missing autostart file"
-fi
-
 # ---- Refresh Splash Logo ----
 echo ""
 echo -n "[~] Downloading splash logo... "
