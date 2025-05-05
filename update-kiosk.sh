@@ -116,7 +116,7 @@ if [ ! -f "$RC_XML" ] || ! grep -q '<mouse>' "$RC_XML"; then
 EOF
   chown kiosk:kiosk "$RC_XML"
 else
-  echo "[✓] rc.xml exists and has mouse config – skipping"
+  echo "[✓] rc.xml exists and has mouse config...  skipping"
 fi
 
 # ---- Future Add-ons: Apply themes, push updates, reboot if needed ----
