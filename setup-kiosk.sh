@@ -2,7 +2,7 @@
 set -e
 
 # ---- Script Version - Manually Updated ----
-VERSION="1.02"
+VERSION="1.03"
 
 # ---- Default Values ----
 KIOSK_USER="kiosk"
@@ -88,23 +88,31 @@ apt install -y --no-install-recommends \
     lightdm
 
 # ---- Create Kiosk User ----
-adduser --disabled-password --gecos "" $KIOSK_USER
+adduser --disabled-password --gecos "" $KIOSK_USER || true
 usermod -aG video,audio $KIOSK_USER
 
 # ---- Remove LightDM Autologin Config ----
 systemctl disable lightdm.service || true
 rm -f /etc/lightdm/lightdm.conf.d/50-myconfig.conf
 
-# ---- Disable Plymouth and getty on tty1 ----
+# ---- Disable Plymouth ----
 systemctl mask \
   plymouth-start.service \
   plymouth-quit.service \
-  plymouth-quit-wait.service \
-    getty@tty1.service || true
+  plymouth-quit-wait.service || true
 
-# ---- Remove splash and quiet from GRUB and set clean params ----
+# ---- Unmask and Auto-login to tty1 ----
+systemctl unmask getty@tty1.service
+mkdir -p /etc/systemd/system/getty@tty1.service.d
+tee /etc/systemd/system/getty@tty1.service.d/override.conf >/dev/null <<EOF
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin $KIOSK_USER --noclear %I \$TERM
+EOF
+
+# ---- Update GRUB ----
 sed -i 's/\<splash\>//g; s/\<quiet\>//g' /etc/default/grub
-sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/&quiet splash console=tty1 /' /etc/default/grub
+sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash console=tty1 /' /etc/default/grub
 update-grub
 
 # ---- Openbox Autostart ----
@@ -124,7 +132,7 @@ tee /home/$KIOSK_USER/.xinitrc >/dev/null <<EOF
 exec openbox-session
 EOF
 
-# ---- Kiosk Startup Splash Script ----
+# ---- Kiosk Splash Script ----
 tee /home/$KIOSK_USER/kiosk-startup.sh >/dev/null <<EOF
 #!/bin/bash
 clear
@@ -137,47 +145,25 @@ sleep 1
 
 echo "✅ System ready. Launching kiosk..."
 sleep 3
-
-sudo chown kiosk:tty /dev/tty1 2>/dev/null || true
-sleep 1
 startx
 EOF
 
 # ---- Download ASCII Logo ----
 curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/logo.txt" -o /home/$KIOSK_USER/logo.txt
-chown $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER/logo.txt
 
-# ---- Update Permissions ----
+# ---- Permissions ----
 usermod -aG tty $KIOSK_USER
 chmod +x /home/$KIOSK_USER/kiosk-startup.sh
 chown -R $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER
 
-# ---- Systemd Splash Service ----
-tee /etc/systemd/system/kiosk-splash.service >/dev/null <<EOF
-[Unit]
-Description=Kiosk Splash Screen
-After=local-fs.target
-Before=getty@tty1.service
-
-[Service]
-User=kiosk
-Type=oneshot
-ExecStart=/home/kiosk/kiosk-startup.sh
-StandardOutput=tty
-StandardError=tty
-TTYPath=/dev/tty1
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
+# ---- .bash_profile triggers startup ----
+tee -a /home/$KIOSK_USER/.bash_profile >/dev/null <<EOF
+[[ -z \$DISPLAY && \$XDG_VTNR -eq 1 ]] && bash ~/kiosk-startup.sh
 EOF
 
-# ---- Enable Service AFTER it exists ----
+# ---- Finalize ----
+systemctl daemon-reexec
 systemctl daemon-reload
-systemctl enable kiosk-splash.service
-
-# ---- Final Ownership Fix ----
-chown -R $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER
 
 echo -e "\n✅ Kiosk environment installed with your custom settings."
 echo "🔁 Reboot now to test splash screen and kiosk launch."
