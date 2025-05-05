@@ -2,7 +2,7 @@
 set -e
 
 # ---- Script Version - Manually Updated ----
-VERSION="1.04"
+VERSION="1.05"
 
 # ---- Default Values ----
 KIOSK_USER="kiosk"
@@ -19,7 +19,7 @@ PORTAL_URL=$DEFAULT_PORTAL_URL
 WHITELIST=$DEFAULT_WHITELIST
 EMPOWER_USER=$DEFAULT_USERNAME
 EMPOWER_PASS=$DEFAULT_PASSWORD
-KIOSK_BRANCH=$DEFAULT_BRANCH
+BRANCH=$DEFAULT_BRANCH
 
 while true; do
     clear
@@ -35,7 +35,7 @@ while true; do
     echo "3. Whitelist URLs        : $WHITELIST"
     echo "4. Empower Username      : $EMPOWER_USER"
     echo "5. Empower Password      : $DEFAULT_PASSWORD"
-    echo "6. Git Branch            : $KIOSK_BRANCH"
+    echo "6. Git Branch            : $BRANCH"
     echo
     read -rp "Select option [1-6] to edit, or ENTER to continue: " CHOICE
 
@@ -57,7 +57,7 @@ while true; do
             echo
             ;;
         6)
-            read -rp "Enter git branch to use [main/dev]: " KIOSK_BRANCH
+            read -rp "Enter git branch to use [main/dev/...]: " BRANCH
             ;;
         "")
             break
