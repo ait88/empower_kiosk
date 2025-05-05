@@ -2,11 +2,10 @@
 set -e
 
 # ---- Script Version ----
-VERSION="0.01-$(date +%Y%m%d)"
+VERSION="0.02-$(date +%Y%m%d)"
 echo "---------------------------------------------"
 echo "Empower Kiosk Update - Ver: $VERSION"
 echo "---------------------------------------------"
-
 
 # ---- Config File ----
 CONFIG_FILE="/home/kiosk/.kiosk-config"
@@ -16,13 +15,13 @@ AUTOSTART_FILE="/home/kiosk/.config/openbox/autostart"
 if [ -f "$CONFIG_FILE" ]; then
     source "$CONFIG_FILE"
 else
-    echo "⚠️  Config file not found: $CONFIG_FILE"
+    echo "[!] Config file not found: $CONFIG_FILE"
     exit 1
 fi
 
-echo "🖥️ Hostname      : $hostname"
-echo "🌐 Portal URL    : $portal_url"
-echo "🔒 Empower User  : $username"
+echo "[Hostname     ] $hostname"
+echo "[Portal URL   ] $portal_url"
+echo "[Empower User ] $username"
 echo
 
 # ---- Update Chromium Autostart ----
@@ -43,17 +42,17 @@ if [ -f "$AUTOSTART_FILE" ]; then
     if [ "$CURRENT" != "$UPDATED_AUTOSTART" ]; then
         echo "$UPDATED_AUTOSTART" > "$AUTOSTART_FILE"
         chown kiosk:kiosk "$AUTOSTART_FILE"
-        echo "✅ Updated autostart to match portal URL"
+        echo "[✓] Updated autostart to match portal URL"
     else
-        echo "✅ Autostart already up-to-date"
+        echo "[✓] Autostart already up-to-date"
     fi
 else
     echo "$UPDATED_AUTOSTART" > "$AUTOSTART_FILE"
     chown kiosk:kiosk "$AUTOSTART_FILE"
-    echo "✅ Created missing autostart file"
+    echo "[✓] Created missing autostart file"
 fi
 
 # ---- Future Add-ons: Apply themes, push updates, reboot if needed ----
 
-echo "🟢 Kiosk update complete."
+echo "[OK] Kiosk update complete."
 exit 0
