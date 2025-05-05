@@ -132,13 +132,13 @@ clear
 # Splash Banner from logo file
 cat /home/$KIOSK_USER/logo.txt
 
-echo "\n🔍 Checking for updates..."
+echo " Checking for updates..."
 sleep 1
 
 # Optionally run update script here
 # curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh" | bash
 
-echo "✅ System ready. Launching kiosk..."
+echo " System ready. Launching kiosk..."
 sleep 2
 
 sudo -u $KIOSK_USER startx
