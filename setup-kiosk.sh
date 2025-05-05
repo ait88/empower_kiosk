@@ -81,7 +81,7 @@ portal_url=$PORTAL_URL
 whitelist=$WHITELIST
 username=$EMPOWER_USER
 password=$EMPOWER_PASS
-branch=$KIOSK_BRANCH
+branch=$BRANCH
 EOF
 
 # ---- Pre-accept Microsoft Fonts EULA ----
@@ -139,8 +139,7 @@ chown $KIOSK_USER:$KIOSK_USER "$AUTOSTART_FILE"
 chmod +x "$AUTOSTART_FILE"
 
 # ---- Download Chromium Launcher ----
-BRANCH="${branch:-main}"
-curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/$BRANCH/main/chromium.sh" -o /home/$KIOSK_USER/chromium.sh
+curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/${BRANCH}/main/chromium.sh" -o /home/$KIOSK_USER/chromium.sh
 chmod +x /home/$KIOSK_USER/chromium.sh
 chown $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER/chromium.sh
 
@@ -159,8 +158,7 @@ echo -e " Checking for updates..."
 sleep 3
 
 # ---- Update Script URL ----
-BRANCH="${branch:-main}"
-curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/$BRANCH/update-kiosk.sh" | bash
+curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/${BRANCH}/update-kiosk.sh" | bash
 
 echo " [✓] System ready. Launching kiosk..."
 sleep 5
@@ -168,8 +166,7 @@ startx
 EOF
 
 # ---- Download ASCII Logo ----
-BRANCH="${branch:-main}"
-curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/$BRANCH/main/logo.txt" -o /home/$KIOSK_USER/logo.txt
+curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/${BRANCH}/main/logo.txt" -o /home/$KIOSK_USER/logo.txt
 
 # ---- Permissions ----
 usermod -aG tty $KIOSK_USER
