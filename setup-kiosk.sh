@@ -137,14 +137,14 @@ tee /home/$KIOSK_USER/kiosk-startup.sh >/dev/null <<EOF
 #!/bin/bash
 clear
 cat /home/$KIOSK_USER/logo.txt
-echo -e "\n🔍 Checking for updates..."
-sleep 1
+echo -e " Checking for updates..."
+sleep 3
 
 # Uncomment below when ready
 # curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh" | bash
 
-echo "✅ System ready. Launching kiosk..."
-sleep 3
+echo " System ready. Launching kiosk..."
+sleep 5
 startx
 EOF
 
