@@ -1,11 +1,8 @@
 #!/bin/bash
 set -e
 
-# ---- base URL helper ----
-RAW_BASE="https://git.aitdev.au/pm/empower_kiosk/raw/branch/${BRANCH}"
-
 # ---- Script Version - Manually Updated ----
-VERSION="1.05"
+VERSION="1.06"
 
 # ---- Default Values ----
 KIOSK_USER="kiosk"
@@ -37,7 +34,7 @@ while true; do
     echo "2. Portal Home Page      : $PORTAL_URL"
     echo "3. Whitelist URLs        : $WHITELIST"
     echo "4. Empower Username      : $EMPOWER_USER"
-    echo "5. Empower Password      : $DEFAULT_PASSWORD"
+    echo "5. Empower Password      : $EMPOWER_PASS"
     echo "6. Git Branch            : $BRANCH"
     echo
     read -rp "Select option [1-6] to edit, or ENTER to continue: " CHOICE
@@ -72,12 +69,19 @@ while true; do
     esac
 done
 
+
+# ---- base URL helper ----
+RAW_BASE="https://git.aitdev.au/pm/empower_kiosk/raw/branch/${BRANCH}"
+
 # ---- Apply Hostname ----
 hostnamectl set-hostname "$KIOSK_HOSTNAME"
 
+# ---- Create Kiosk User ----
+adduser --disabled-password --gecos "" $KIOSK_USER || true
+usermod -aG video,audio $KIOSK_USER
+
 # ---- Save Config ----
 CONFIG_FILE="/home/$KIOSK_USER/.kiosk-config"
-mkdir -p "/home/$KIOSK_USER"
 cat > "$CONFIG_FILE" <<EOF
 hostname=$KIOSK_HOSTNAME
 portal_url=$PORTAL_URL
@@ -86,6 +90,7 @@ username=$EMPOWER_USER
 password=$EMPOWER_PASS
 branch=$BRANCH
 EOF
+chown "$KIOSK_USER:$KIOSK_USER" "$CONFIG_FILE"
 
 # ---- Pre-accept Microsoft Fonts EULA ----
 echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | sudo debconf-set-selections
@@ -96,10 +101,6 @@ apt install -y --no-install-recommends \
     xorg xinit openbox chromium-browser \
     fonts-dejavu ttf-mscorefonts-installer \
     lightdm
-
-# ---- Create Kiosk User ----
-adduser --disabled-password --gecos "" $KIOSK_USER || true
-usermod -aG video,audio $KIOSK_USER
 
 # ---- Remove LightDM Autologin Config ----
 systemctl disable lightdm.service || true
@@ -155,11 +156,12 @@ EOF
 # ---- Kiosk Splash Script ----
 tee /home/$KIOSK_USER/kiosk-startup.sh >/dev/null <<EOF
 #!/bin/bash
-source ~/ .kiosk-config
-BRANCH=${branch:-main}
+source ~/.kiosk-config
+BRANCH=${BRANCH:-main}
+RAW_BASE="https://git.aitdev.au/pm/empower_kiosk/raw/branch/${BRANCH}"
 
 clear
-cat /home/$KIOSK_USER/logo.txt
+cat ~/logo.txt
 echo -e " Checking for updates..."
 sleep 3
 
