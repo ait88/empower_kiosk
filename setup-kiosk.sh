@@ -115,9 +115,10 @@ sed -i 's/\<splash\>//g; s/\<quiet\>//g' /etc/default/grub
 sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash console=tty1 /' /etc/default/grub
 update-grub
 
-# ---- Openbox Autostart ----
-mkdir -p /home/$KIOSK_USER/.config/openbox
-tee /home/$KIOSK_USER/.config/openbox/autostart >/dev/null <<EOF
+# ---- Write Openbox Autostart ----
+AUTOSTART_FILE="/home/$KIOSK_USER/.config/openbox/autostart"
+mkdir -p "$(dirname "$AUTOSTART_FILE")"
+cat > "$AUTOSTART_FILE" <<EOF
 # Prevent screen blanking
 xset s off
 xset -dpms
@@ -126,6 +127,9 @@ xset s noblank
 # Launch Chromium via external script
 /home/$KIOSK_USER/chromium.sh
 EOF
+
+chown $KIOSK_USER:$KIOSK_USER "$AUTOSTART_FILE"
+chmod +x "$AUTOSTART_FILE"
 
 # ---- Download Chromium Launcher ----
 curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/chromium.sh" -o /home/$KIOSK_USER/chromium.sh
