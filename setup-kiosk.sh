@@ -128,7 +128,7 @@ EOF
 tee /home/$KIOSK_USER/kiosk-startup.sh >/dev/null <<EOF
 #!/bin/bash
 clear
-cat /home/kiosk/logo.txt
+cat /home/$KIOSK_USER/logo.txt
 echo -e "\n🔍 Checking for updates..."
 sleep 1
 
@@ -143,17 +143,14 @@ sleep 1
 startx
 EOF
 
-# ---- Update Permissions ----
-usermod -aG tty kiosk
-chmod +x /home/$KIOSK_USER/kiosk-startup.sh
-sudo chown -R kiosk:kiosk /home/kiosk
-sudo systemctl daemon-reexec
-sudo systemctl daemon-reload
-sudo systemctl restart kiosk-splash.service
-
 # ---- Download ASCII Logo ----
 curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/logo.txt" -o /home/$KIOSK_USER/logo.txt
 chown $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER/logo.txt
+
+# ---- Update Permissions ----
+usermod -aG tty $KIOSK_USER
+chmod +x /home/$KIOSK_USER/kiosk-startup.sh
+chown -R $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER
 
 # ---- Systemd Splash Service ----
 tee /etc/systemd/system/kiosk-splash.service >/dev/null <<EOF
@@ -175,6 +172,7 @@ RemainAfterExit=yes
 WantedBy=multi-user.target
 EOF
 
+# ---- Enable Service AFTER it exists ----
 systemctl daemon-reload
 systemctl enable kiosk-splash.service
 
