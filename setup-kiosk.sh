@@ -2,7 +2,7 @@
 set -e
 
 # ---- Script Version - Manually Updated ----
-VERSION="1.00"
+VERSION="1.01"
 
 # ---- Default Values ----
 KIOSK_USER="kiosk"
@@ -91,14 +91,20 @@ apt install -y --no-install-recommends \
 adduser --disabled-password --gecos "" $KIOSK_USER
 usermod -aG video,audio $KIOSK_USER
 
-# ---- LightDM Autologin ----
-mkdir -p /etc/lightdm/lightdm.conf.d
-cat > /etc/lightdm/lightdm.conf.d/50-myconfig.conf <<EOF
-[Seat:*]
-autologin-user=$KIOSK_USER
-autologin-user-timeout=0
-user-session=openbox
-EOF
+# ---- Remove LightDM Autologin Config ----
+systemctl disable lightdm.service || true
+rm -f /etc/lightdm/lightdm.conf.d/50-myconfig.conf
+
+# ---- Disable Plymouth and getty on tty1 ----
+systemctl mask \
+  plymouth-start.service \
+  plymouth-quit.service \
+  plymouth-quit-wait.service \
+  getty@tty1.service
+
+# ---- Update GRUB Kernel Params ----
+sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash /' /etc/default/grub
+update-grub
 
 # ---- Openbox Autostart ----
 mkdir -p /home/$KIOSK_USER/.config/openbox
@@ -112,21 +118,63 @@ xset s noblank
 chromium-browser --kiosk --no-first-run --disable-translate --noerrdialogs --disable-infobars "$PORTAL_URL"
 EOF
 
-# ---- .xinitrc and .bash_profile ----
+# ---- .xinitrc ----
 tee /home/$KIOSK_USER/.xinitrc >/dev/null <<EOF
 exec openbox-session
 EOF
 
-tee -a /home/$KIOSK_USER/.bash_profile >/dev/null <<EOF
-# Start X session automatically
-[[ -z \$DISPLAY && \$XDG_VTNR -eq 1 ]] && startx
+# ---- Kiosk Startup Splash Script ----
+tee /home/$KIOSK_USER/kiosk-startup.sh >/dev/null <<EOF
+#!/bin/bash
+clear
 
-# Pull updates from repo
-curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh" | bash || echo "⚠️ Kiosk update check failed."
+# Splash Banner
+cat << 'BANNER'
+    ______                                           __ __ _            __  
+   / ____/___ ___  ____  ____ _      _____  _____   / //_/(_)___  _____/ /__
+  / __/ / __ `__ \/ __ \/ __ \ | /| / / _ \/ ___/  / ,<  / / __ \/ ___/ //_/
+ / /___/ / / / / / /_/ / /_/ / |/ |/ /  __/ /     / /| |/ / /_/ (__  ) ,<   
+/_____/_/ /_/ /_/ .___/\____/|__/|__/\___/_/     /_/ |_/_/\____/____/_/|_|  
+               /_/                                                          
+BANNER
+
+echo "\n🔍 Checking for updates..."
+sleep 1
+
+# Optionally run update script here
+# curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh" | bash
+
+echo "✅ System ready. Launching kiosk..."
+sleep 2
+
+sudo -u $KIOSK_USER startx
+EOF
+chmod +x /home/$KIOSK_USER/kiosk-startup.sh
+
+# ---- Systemd Splash Service ----
+tee /etc/systemd/system/kiosk-splash.service >/dev/null <<EOF
+[Unit]
+Description=Kiosk Splash Screen
+After=local-fs.target
+Before=getty@tty1.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/$KIOSK_USER/kiosk-startup.sh
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/tty1
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
 EOF
 
-echo -e "\n✅ Kiosk environment installed with your custom settings."
-echo "🔁 Reboot now to test automatic login, kiosk mode, and update check."
+systemctl daemon-reload
+systemctl enable kiosk-splash.service
 
-# ---- Final Ownership Fix (ensure everything is clean) ----
+# ---- Final Ownership Fix ----
 chown -R $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER
+
+echo -e "\n✅ Kiosk environment installed with your custom settings."
+echo "🔁 Reboot now to test splash screen and kiosk launch."
