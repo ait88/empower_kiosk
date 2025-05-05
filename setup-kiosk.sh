@@ -152,6 +152,9 @@ EOF
 # ---- Kiosk Splash Script ----
 tee /home/$KIOSK_USER/kiosk-startup.sh >/dev/null <<EOF
 #!/bin/bash
+source ~/ .kiosk-config
+BRANCH=${branch:-main}
+
 clear
 cat /home/$KIOSK_USER/logo.txt
 echo -e " Checking for updates..."
