@@ -7,21 +7,6 @@ echo "---------------------------------------------"
 echo "Empower Kiosk Update - Ver: $VERSION"
 echo "---------------------------------------------"
 
-# ---- Ensure .xprofile is up-to-date ----
-XPROFILE_LOCAL="/home/kiosk/.xprofile"
-XPROFILE_REPO="https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/xprofile"
-
-curl -fsSL "$XPROFILE_REPO" -o /tmp/xprofile.new
-
-if ! cmp -s "$XPROFILE_LOCAL" /tmp/xprofile.new; then
-    cp /tmp/xprofile.new "$XPROFILE_LOCAL"
-    chown kiosk:kiosk "$XPROFILE_LOCAL"
-    chmod +x "$XPROFILE_LOCAL"
-    echo "✅ Updated .xprofile from repo"
-else
-    echo "✅ .xprofile already up-to-date"
-fi
-
 
 # ---- Config File ----
 CONFIG_FILE="/home/kiosk/.kiosk-config"
