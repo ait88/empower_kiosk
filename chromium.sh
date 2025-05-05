@@ -1,5 +1,5 @@
 #!/bin/bash
-
+source /home/kiosk/.kiosk-config
 LOG_FILE="/tmp/chromium.log"
 
 # Make sure DISPLAY is set (Openbox gives us this)
