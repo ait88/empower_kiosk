@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# ---- base URL helper ----
+RAW_BASE="https://git.aitdev.au/pm/empower_kiosk/raw/branch/${BRANCH}"
+
 # ---- Script Version - Manually Updated ----
 VERSION="1.05"
 
@@ -139,7 +142,7 @@ chown $KIOSK_USER:$KIOSK_USER "$AUTOSTART_FILE"
 chmod +x "$AUTOSTART_FILE"
 
 # ---- Download Chromium Launcher ----
-curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/${BRANCH}/main/chromium.sh" -o /home/$KIOSK_USER/chromium.sh
+curl -fsSL "${RAW_BASE}/chromium.sh" -o /home/$KIOSK_USER/chromium.sh
 chmod +x /home/$KIOSK_USER/chromium.sh
 chown $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER/chromium.sh
 
@@ -161,7 +164,7 @@ echo -e " Checking for updates..."
 sleep 3
 
 # ---- Update Script URL ----
-curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/${BRANCH}/update-kiosk.sh" | bash
+curl -fsSL "${RAW_BASE}/update-kiosk.sh" | bash
 
 echo " [✓] System ready. Launching kiosk..."
 sleep 5
@@ -169,7 +172,7 @@ startx
 EOF
 
 # ---- Download ASCII Logo ----
-curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/${BRANCH}/main/logo.txt" -o /home/$KIOSK_USER/logo.txt
+curl -fsSL "${RAW_BASE}/logo.txt" -o /home/$KIOSK_USER/logo.txt
 
 # ---- Permissions ----
 usermod -aG tty $KIOSK_USER
