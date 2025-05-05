@@ -2,7 +2,7 @@
 set -e
 
 # ---- Script Version - Manually Updated ----
-VERSION="1.01"
+VERSION="1.02"
 
 # ---- Default Values ----
 KIOSK_USER="kiosk"
@@ -128,15 +128,8 @@ tee /home/$KIOSK_USER/kiosk-startup.sh >/dev/null <<EOF
 #!/bin/bash
 clear
 
-# Splash Banner
-cat << 'BANNER'
-    ______                                           __ __ _            __  
-   / ____/___ ___  ____  ____ _      _____  _____   / //_/(_)___  _____/ /__
-  / __/ / __ `__ \/ __ \/ __ \ | /| / / _ \/ ___/  / ,<  / / __ \/ ___/ //_/
- / /___/ / / / / / /_/ / /_/ / |/ |/ /  __/ /     / /| |/ / /_/ (__  ) ,<   
-/_____/_/ /_/ /_/ .___/\____/|__/|__/\___/_/     /_/ |_/_/\____/____/_/|_|  
-               /_/                                                          
-BANNER
+# Splash Banner from logo file
+cat /home/$KIOSK_USER/logo.txt
 
 echo "\n🔍 Checking for updates..."
 sleep 1
@@ -150,6 +143,10 @@ sleep 2
 sudo -u $KIOSK_USER startx
 EOF
 chmod +x /home/$KIOSK_USER/kiosk-startup.sh
+
+# ---- Download ASCII Logo ----
+curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/logo.txt" -o /home/$KIOSK_USER/logo.txt
+chown $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER/logo.txt
 
 # ---- Systemd Splash Service ----
 tee /etc/systemd/system/kiosk-splash.service >/dev/null <<EOF
