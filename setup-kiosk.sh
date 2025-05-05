@@ -140,10 +140,10 @@ cat /home/$KIOSK_USER/logo.txt
 echo -e " Checking for updates..."
 sleep 3
 
-# Uncomment below when ready
-# curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh" | bash
+# ---- Update Script URL ----
+curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/main/update-kiosk.sh" | bash
 
-echo " System ready. Launching kiosk..."
+echo " [✓] System ready. Launching kiosk..."
 sleep 5
 startx
 EOF
