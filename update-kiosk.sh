@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+BRANCH=${branch:-main}
 
 # ---- Script Version ----
 VERSION="0.04-$(date +%Y%m%d)"
@@ -12,7 +13,7 @@ echo "---------------------------------------------"
 CONFIG_FILE="/home/kiosk/.kiosk-config"
 AUTOSTART_FILE="/home/kiosk/.config/openbox/autostart"
 LOGO_FILE="/home/kiosk/logo.txt"
-LOGO_URL="https://git.aitdev.au/pm/empower_kiosk/raw/branch/$BRANCH/logo.txt"
+LOGO_URL="https://git.aitdev.au/pm/empower_kiosk/raw/branch/${BRANCH}/logo.txt"
 
 # ---- Load Config ----
 if [ -f "$CONFIG_FILE" ]; then
@@ -71,8 +72,8 @@ fi
 
 # ---- Refresh Chromium Launcher Script ----
 echo -n "[~] Checking chromium.sh... "
-BRANCH="${branch:-main}"
-if curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/$BRANCH/main/chromium.sh" -o /tmp/chromium.sh; then
+BRANCH=${branch:-main}
+if curl -fsSL "https://git.aitdev.au/pm/empower_kiosk/raw/branch/${BRANCH}/chromium.sh" -o /tmp/chromium.sh; then
     if ! cmp -s /tmp/chromium.sh /home/kiosk/chromium.sh; then
         mv /tmp/chromium.sh /home/kiosk/chromium.sh
         chmod +x /home/kiosk/chromium.sh
