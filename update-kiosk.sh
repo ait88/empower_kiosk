@@ -86,6 +86,39 @@ else
     echo "Failed to download."
 fi
 
+echo "[~] Checking Openbox mouse config..."
+
+RC_XML="/home/kiosk/.config/openbox/rc.xml"
+
+EXPECTED_MOUSE_BLOCK=$(cat <<EOF
+<mouse>
+  <context name="Desktop">
+    <mousebind button="Right" action="Press"/>
+    <mousebind button="Middle" action="Press"/>
+    <mousebind button="Up" action="Click"/>
+    <mousebind button="Down" action="Click"/>
+    <mousebind button="Left" action="Click"/>
+  </context>
+</mouse>
+EOF
+)
+
+# Ensure config dir exists
+mkdir -p "$(dirname "$RC_XML")"
+
+# Generate minimal rc.xml if missing or lacking mouse block
+if [ ! -f "$RC_XML" ] || ! grep -q '<mouse>' "$RC_XML"; then
+  echo "[✓] Writing hardened rc.xml"
+  cat > "$RC_XML" <<EOF
+<openbox_config>
+  $EXPECTED_MOUSE_BLOCK
+</openbox_config>
+EOF
+  chown kiosk:kiosk "$RC_XML"
+else
+  echo "[✓] rc.xml exists and has mouse config...  skipping"
+fi
+
 # ---- Future Add-ons: Apply themes, push updates, reboot if needed ----
 echo ""
 echo "[OK] Kiosk update complete."
